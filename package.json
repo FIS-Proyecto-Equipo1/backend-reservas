@@ -1,0 +1,23 @@
+{
+  "name": "backend-reservas",
+  "version": "1.0.0",
+  "description": "Reservas de la aplicació",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Roberto Serrano - Juan Luis Montes Calvo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FIS-Proyecto-Equipo1/backend-reservas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FIS-Proyecto-Equipo1/backend-reservas/issues"
+  },
+  "homepage": "https://github.com/FIS-Proyecto-Equipo1/backend-reservas#readme"
+}

@@ -1,12 +1,12 @@
 swagger: "2.0"
 info:
-  description: "Definición del servicio de autenticación"
+  description: "Definición del servicio de Reservas"
   version: "1.0.0"
-  title: "Servicio de autenticación"
+  title: "Servicio de Reservas"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "backend-login-e1.herokuapp.com"
+host: "backend-reservas.herokuapp.com"
 basePath: "/api/v1"
 tags:
 - name: "Reservas"
@@ -49,7 +49,7 @@ paths:
       parameters:
       - in: "header"
         name: "Authorization"
-        description: "Identificador del usuario"
+        description: "Token del usuario"
         required: true
         type: string
       consumes:
@@ -74,7 +74,7 @@ paths:
       parameters:
       - in: "header"
         name: "Authorization"
-        description: "Identificador del usuario"
+        description: "Token del usuario"
         required: true
         type: string
       - in: "path"

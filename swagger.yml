@@ -37,19 +37,19 @@ paths:
         "200":
           description: "Operación satisfactoria"
           schema:
-            type: "string"
+            $ref: "#/definitions/Reserva"
         "400":
           description: "Error de validación"
     get:
       tags:
       - "Reservas"
       summary: "Listado de reservas para un usuario"
-      description: ""
+      description: "Obtiene el listado de reservas para el usuario indicado en la cabecera"
       operationId: "listaReservas"
       parameters:
       - in: "header"
-        name: "Authorization"
-        description: "Token del usuario"
+        name: "x-user"
+        description: "Identificador del usuario"
         required: true
         type: string
       consumes:
@@ -73,8 +73,8 @@ paths:
       operationId: "obtenerReserva"
       parameters:
       - in: "header"
-        name: "Authorization"
-        description: "Token del usuario"
+        name: "x-user"
+        description: "Identificador del usuario"
         required: true
         type: string
       - in: "path"
@@ -90,10 +90,7 @@ paths:
         "200":
           description: "Operación satisfactoria"
           schema:
-            type: "array"
-            items: 
-              type: "object"
-              $ref: "#/definitions/Reserva"
+            $ref: "#/definitions/Reserva"
         "404":
           description: "No encontrada"
     delete:
@@ -104,7 +101,7 @@ paths:
       operationId: "cancelarReserva"
       parameters:
       - in: "header"
-        name: "Authorization"
+        name: "x-user"
         description: "Identificador del usuario"
         required: true
         type: string
@@ -118,24 +115,19 @@ paths:
       produces:
       - "application/json"
       responses:
-        "200":
+        "204":
           description: "Operación satisfactoria"
-          schema:
-            type: "array"
-            items: 
-              type: "object"
-              $ref: "#/definitions/Reserva"
         "404":
           description: "No encontrada"
     patch:
       tags:
       - "Reservas"
-      summary: "Inicia una reserva para un usuario"
+      summary: "Inicia el viaje de una reserva para un usuario"
       description: ""
       operationId: "iniciarReserva"
       parameters:
       - in: "header"
-        name: "Authorization"
+        name: "x-user"
         description: "Identificador del usuario"
         required: true
         type: string
@@ -149,13 +141,8 @@ paths:
       produces:
       - "application/json"
       responses:
-        "200":
+        "204":
           description: "Operación satisfactoria"
-          schema:
-            type: "array"
-            items: 
-              type: "object"
-              $ref: "#/definitions/Reserva"
         "404":
           description: "No encontrada"
  
@@ -164,6 +151,9 @@ definitions:
   Reserva:
     type: "object"
     properties:
+      id_reserva:
+        type: "integer"
+        format: "int64"
       id_vehiculo:
         type: "integer"
         format: "int64"
@@ -180,8 +170,5 @@ definitions:
     type: "object"
     properties:
       id_vehiculo:
-        type: "integer"
-        format: "int64"
-      id_cliente:
         type: "integer"
         format: "int64"

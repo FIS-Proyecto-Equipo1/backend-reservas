@@ -106,4 +106,29 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
     });
 });
 
+
+//** Dejar para pruebas de autenticación - INICIO */
+var reservations_aux = [
+    {"idCliente": 1, "idVehiculo": 1, "expiracionDatetime": "2020-12-18T13:45:30"}
+]
+
+app.get(BASE_API_PATH + "/pruebas-auth", (req, res) => {
+    console.log(req.headers)
+    idCliente = req.header('x-user')
+    if (idCliente){
+        var result = [];
+        reservations_aux.forEach( _reserva => {
+            if( _reserva.idCliente == idCliente){
+                result.push(_reserva)
+            }
+        });
+        res.send(result)
+    }else{
+        res.status(400).send()
+    }
+});
+//** Dejar para pruebas de autenticación - FIN*/
+
+
+
 module.exports = app;

@@ -7,7 +7,7 @@ COPY package-lock.json .
 
 RUN npm install
 
-COPY index.js .
+COPY *.js ./
 
 EXPOSE 4041
 

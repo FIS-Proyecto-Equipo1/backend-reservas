@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const reservationsSchema = new mongoose.Schema({
     id_reservation: { type: Number, required: true, index: { unique: true } },
-    id_vehicle: { type: Number, required: true },
+    id_vehicle: { type: String, required: true },
     id_client: { type: Number, required: true },
     creation_datetime: { type: Number, required: false },
     expiration_datetime: { type: Number, required: false }

@@ -15,29 +15,95 @@ app.use(function(req, res, next) {
   });
 
 app.use(bodyParser.json())
-  
-var reservations = [
-    {"idCliente": 1, "idVehiculo": 1, "expiracionDatetime": "2020-12-18T13:45:30"}
-]
 
 app.get("/", (req, res) => {
-    res.send("<html><body><h1>Hello World Ma boy</h1></body></html>")
+    res.send("<html><body><h1>Reservas OK</h1></body></html>")
 });
 
-app.get(BASE_API_PATH + "/reservas", (req, res) => {
-    var result = [];
-    if(req.query.idcliente){
-        // console.log(req.query.idcliente)
-        reservations.forEach( _reserva => {
-            // console.log( _reserva.idCliente)
-            // console.log( req.query.idcliente)
-            // console.log( _reserva.idCliente == req.query.idcliente)
-            if( _reserva.idCliente == req.query.idcliente){
-                result.push(_reserva)
+app.get(`${BASE_API_PATH}/reservas`, (req, res)  => {
+    Reservations.find(req.query, (err, reservations) => {
+        if(err){
+            console.log(`${Date()} - ${err}`);
+            res.sendStatus(500);
+        }else{
+            console.log(`${Date()} GET /reservas`)
+            res.send(reservations.map((reservation) => {
+                return reservation.cleanup();
+            }));
+        }
+    });
+});
+
+app.get(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
+    Reservations.findOne({"id_reservation": req.params.id_reservation}, (err, reservation) => {
+        if(err){
+            console.log(`${Date()} - ${err}`);
+            res.sendStatus(500);
+        }else{
+            if(reservation == null){
+                console.log(`${Date()} GET /reservas/${req.params.id_reservation} - Not found`);
+                res.sendStatus(404);
             }
-        });
-    }
-    res.send(result)
+            else    
+            {
+                console.log(`${Date()} GET /reservas/${req.params.id_reservation}`);
+                res.send(reservation.cleanup());
+            }
+        }
+    });
+});
+
+app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
+    var reservation = req.body;
+    Reservations.create(reservation, (err) => {
+        if(err)
+        {
+            console.log(`${Date()} - ${err}`);
+            res.sendStatus(500);
+        }else{
+            console.log(`${Date()} POST /reservas`);
+            res.sendStatus(201);
+        }
+    });
+});
+
+app.delete(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
+    let reservation = req.params.id_reservation;
+
+    Reservations.findOneAndDelete({"id_reservation": reservation}, (err) => {
+        if(err)
+        {    
+            console.log(err);
+            res.sendStatus(500);
+        }else
+        {
+            console.log(`${Date()} DELETE /reservas/${reservation}`);
+            res.status(200).send({message : `Reservation ${reservation} removed`});
+        }
+    });
+});
+
+app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req, res)  => {
+    Reservations.findOne({"id_reservation": req.params.id_reservation}, (err, reservation) => {
+        if(err){
+            console.log(Date()+" - "+ err);
+            res.sendStatus(500);
+        }else{
+            if(reservation == null){
+                console.log(`${Date()} POST /reservas/${req.params.id_reservation}/desbloquear-vehiculo - Invalid`);
+                res.sendStatus(404);
+            }
+            else    
+            {
+                console.log(`${Date()} POST /reservas/${req.params.id_reservation}/desbloquear-vehiculo`);
+                // TODO: Llamar a desbloquear vehiculo de la api de vehiculos con el id_vehiculo
+                // let vehicle = apiVehicule.get(BASE_API_PATH + "/vehicle" + reservation.id_vehicle);
+                // set estado to RESERVADO
+
+                res.send(reservation.cleanup());
+            }
+        }
+    });
 });
 
 module.exports = app;

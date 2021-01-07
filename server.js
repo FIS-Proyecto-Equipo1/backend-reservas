@@ -21,6 +21,8 @@ app.get("/", (req, res) => {
 });
 
 app.get(`${BASE_API_PATH}/reservas`, (req, res)  => {
+    idCliente = req.header('x-user');
+    console.log(`user: ${idCliente}`);
     Reservations.find(req.query, (err, reservations) => {
         if(err){
             console.log(`${Date()} - ${err}`);

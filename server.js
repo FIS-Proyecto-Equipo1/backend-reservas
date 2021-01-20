@@ -1,6 +1,9 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+const cron = require("node-cron")
 const Reservations = require('./reservations');
+const VehiculosResource = require('./vehiculosResource');
+const UsuariosResource = require('./usuariosResource');
 
 var BASE_API_PATH = "/api/v1";
 
@@ -15,6 +18,22 @@ app.use(function(req, res, next) {
   });
 
 app.use(bodyParser.json())
+
+
+
+
+
+class Error{
+    static error = ""
+    constructor(message){
+        this.error = message
+    }
+    
+}
+
+
+
+
 
 app.get("/", (req, res) => {
     res.send("<html><body><h1>Reservas OK</h1></body></html>")
@@ -37,7 +56,7 @@ app.get(`${BASE_API_PATH}/reservas`, (req, res)  => {
 });
 
 app.get(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
-    Reservations.findOne({"id_reservation": req.params.id_reservation}, (err, reservation) => {
+    Reservations.findById(req.params.id_reservation, (err, reservation) => {
         if(err){
             console.log(`${Date()} - ${err}`);
             res.sendStatus(500);
@@ -56,17 +75,90 @@ app.get(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
 });
 
 app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
+    console.log(`${Date()} - POST /reservas`);
     var reservation = req.body;
-    Reservations.create(reservation, (err) => {
-        if(err)
-        {
-            console.log(`${Date()} - ${err}`);
-            res.sendStatus(500);
-        }else{
-            console.log(`${Date()} POST /reservas`);
-            res.sendStatus(201);
-        }
-    });
+    fechaCreacion = Date();
+    reservation.fechaCreacion = fechaCreacion;
+    idCliente = req.header('x-user')
+
+
+    // Obtenemos los datos del vehiculo
+    VehiculosResource.getVehicle(reservation.id_vehicle)
+        .then((vehiculo) => {
+            console.log("Respuesta")
+            // return res.send(vehiculo)
+            // Si el vehiculo no está disponible, error
+            if(vehiculo.estado !== VehiculosResource.STATUS_DISPONIBLE ){
+                return res.send(new Error("Vehiculo no disponible")).status(400);
+            }
+
+            // Obtenemos los datos del usuario
+            UsuariosResource.getUsuario(idCliente)
+            .then((usuario) => {
+
+                if(usuario.permiso !== vehiculo.permiso ){
+                    return res.send(new Error("Permiso no adecuado")).status(400);
+                }
+                
+                reservation.creation_datetime = Date.now()
+                reservation.expiration_datetime = new Date(Date.now() + ( 360 * 1000))
+                reservation.status = 
+                Reservations.create(reservation, (err, reservationDB) => {
+                    if(err)
+                    {
+                        console.log(`${Date()} - ${err}`);
+                        res.sendStatus(500);
+                    }else{
+                        console.log(`${Date()} POST /reservas`);
+
+                        VehiculosResource.patchVehicle(reservation.id_vehicle, VehiculosResource.STATUS_RESERVADO)
+                        .then((vehiculo) => {
+                            
+                            res.send(reservationDB).status(201);
+                        })
+                        .catch((error) => {
+                            console.log("error :" + error);
+
+                            Reservations.deleteOne(reservation._id, (err) => {
+                                return res.sendStatus(500);
+                            });
+
+
+                        })
+
+
+                        
+                    }
+                });
+
+
+
+
+
+            })
+            .catch((error) => {
+                console.log("error :" + error);
+                return res.sendStatus(500);
+            })
+
+        })
+        .catch((error) => {
+            console.log("error :" + error);
+            return res.sendStatus(500);
+        })
+
+
+        console.log("Detrás")
+    // Reservations.create(reservation, (err) => {
+    //     if(err)
+    //     {
+    //         console.log(`${Date()} - ${err}`);
+    //         res.sendStatus(500);
+    //     }else{
+    //         console.log(`${Date()} POST /reservas`);
+    //         res.sendStatus(201);
+    //     }
+    // });
 });
 
 app.delete(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
@@ -111,7 +203,8 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
 
 //** Dejar para pruebas de autenticación - INICIO */
 var reservations_aux = [
-    {"idCliente": 1, "idVehiculo": 1, "expiracionDatetime": "2020-12-18T13:45:30"}
+    {"idReserva": 1, "idCliente": 1, "idVehiculo": 1, "expiracionDatetime": "2020-12-18T13:45:30"},
+    {"idReserva": 2, "idCliente": 2, "idVehiculo": 2, "expiracionDatetime": "2020-12-18T13:45:30"}
 ]
 
 app.get(BASE_API_PATH + "/pruebas-auth", (req, res) => {
@@ -132,5 +225,8 @@ app.get(BASE_API_PATH + "/pruebas-auth", (req, res) => {
 //** Dejar para pruebas de autenticación - FIN*/
 
 
+cron.schedule("* * * * *", function () {
+    console.log("Running Cron Job");
+});
 
 module.exports = app;

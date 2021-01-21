@@ -227,6 +227,43 @@ app.get(BASE_API_PATH + "/pruebas-auth", (req, res) => {
 
 cron.schedule("* * * * *", function () {
     console.log("Running Cron Job");
+
+    Reservations.find({"status": "RESERVADA", "creation_datetime": {$lt: new Date()}}, (err, expiredReservations) => {
+        if(err){
+            console.log(Date()+" - "+ err);
+            
+        }else{
+            if(expiredReservations == null){
+                console.log(`${Date()} No expired`);
+            }
+            else    
+            {
+                for( var i = 0; i < expiredReservations.length; i++ ){
+                    var reserva = expiredReservations[i]
+                    console.log(expiredReservations[i]);
+
+                    // Modifica el estado del vehículo
+                    VehiculosResource.patchVehicle(reserva.id_vehicle, VehiculosResource.STATUS_DISPONIBLE)
+                        .then((vehiculo) => {
+                            // Marca como expirada la reserva
+                            reserva.status = "EXPIRADA"
+                            Reservations.findOneAndUpdate({_id: reserva._id}, reserva, (erro, reservaDB)=>{
+
+                                if (erro) {
+                                    console.log("Error" + erro)
+                                }
+                            });
+                        })
+                        .catch((error) => {
+                            console.log("error :" + error);
+                        })
+                }
+                
+
+            }
+        }
+    });
+
 });
 
 module.exports = app;

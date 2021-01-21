@@ -15,10 +15,10 @@ const reservationsSchema = new mongoose.Schema({
 
 mongoose.set('useCreateIndex', true);
 
-// reservationsSchema.methods.cleanup = function() {
-//     return {_id: this._id, id_vehicle: this.id_vehicle, id_client: this.id_client, status: this.status,
-//     creation_datetime: this.creation_datetime, expiration_datetime: this.expiration_datetime};
-// }
+reservationsSchema.methods.cleanup = function() {
+    return {_id: this._id, id_vehicle: this.id_vehicle, id_client: this.id_client, status: this.status,
+    creation_datetime: this.creation_datetime, expiration_datetime: this.expiration_datetime};
+}
 
 const Reservations = mongoose.model('Reservations', reservationsSchema);
 module.exports = Reservations;

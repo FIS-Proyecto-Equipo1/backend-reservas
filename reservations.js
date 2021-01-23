@@ -7,7 +7,7 @@ let estadosValidos = {
 
 const reservationsSchema = new mongoose.Schema({
     id_vehicle: { type: String, required: [true, "Es necesario el id de vehiculo"] },
-    id_client: { type: Number, required: [true, "Es necesario el id de cliente"] },
+    id_client: { type: String, required: [true, "Es necesario el id de cliente"] },
     status: {type: String, default: "RESERVADA",required: true, enum: estadosValidos},
     creation_datetime: { type: Number, required: false },
     expiration_datetime: { type: Number, required: false }

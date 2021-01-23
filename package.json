@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test-detect": "jest --detectOpenHandles"
   },
   "author": "Roberto Serrano - Juan Luis Montes Calvo",
   "license": "ISC",
@@ -26,5 +27,10 @@
   "bugs": {
     "url": "https://github.com/FIS-Proyecto-Equipo1/backend-reservas/issues"
   },
-  "homepage": "https://github.com/FIS-Proyecto-Equipo1/backend-reservas#readme"
+  "homepage": "https://github.com/FIS-Proyecto-Equipo1/backend-reservas#readme",
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "jest-extended": "^0.11.5",
+    "supertest": "^6.1.1"
+  }
 }

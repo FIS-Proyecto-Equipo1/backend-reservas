@@ -21,7 +21,7 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json())
 
 class Error{
-    static error = ""
+    static error
     constructor(message){
         this.error = message
     }

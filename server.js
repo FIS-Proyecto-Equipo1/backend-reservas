@@ -218,7 +218,11 @@ if(process.env.IS_TEST === undefined || !process.env.IS_TEST){
     cron.schedule("* * * * *", function () {
         console.log("Cron Job para expirar reservas caducadas");
     
-        Reservations.find({"status": "RESERVADA", "creation_datetime": {$lt: new Date()}}, (err, expiredReservations) => {
+        momento = new Date();
+        // console.log(momento)
+        momento.setMinutes(momento.getMinutes() - 10);
+        // console.log(momento)
+        Reservations.find({"status": "RESERVADA", "creation_datetime": {$lt: momento}}, (err, expiredReservations) => {
             if(err){
                 console.log(Date()+" - "+ err);
                 

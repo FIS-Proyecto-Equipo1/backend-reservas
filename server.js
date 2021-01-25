@@ -176,7 +176,7 @@ app.delete(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
 
 
 app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req, res)  => {
-    Reservations.findOne({"id_reservation": req.params._id}, (err, reserva) => {
+    Reservations.findOne({"_id": req.params.id_reservation}, (err, reserva) => {
         if(err){
             console.log(Date()+" - "+ err);
             res.sendStatus(500);
@@ -188,7 +188,8 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
             else    
             {
                 //TODO - comprobar que la reserva no está ni expirada ni iniciada!!
-                if(reserva.estado != "RESERVADA"){
+                console.log(reserva)
+                if(reserva.status !== "RESERVADA"){
                     return res.send(new Error("Reserva ya iniciada o expirada")).status(400);
                 }
 

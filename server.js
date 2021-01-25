@@ -150,15 +150,23 @@ app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
 app.delete(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
     let reservation = req.params.id_reservation;
 
-    Reservations.findOneAndDelete({"id_reservation": reservation}, (err) => {
-        if(err)
+    Reservations.findOneAndDelete({"_id": reservation, "status":"RESERVADA"}, (err, reservationDB) => {
+        if(err || reservationDB == undefined)
         {    
             console.log(err);
-            return res.send(new Error("Reserva no encontrada")).status(500);
+            return res.send(new Error("Reserva no encontrada o ya expirada/iniciada")).status(500);
         }else
         {
-            console.log(`${Date()} DELETE /reservas/${reservation}`);
-            return res.status(200).send({message : `Reservation ${reservation} removed`});
+            VehiculosResource.patchVehicle(reservationDB.id_vehicle, VehiculosResource.STATUS_DISPONIBLE)
+            .then((vehiculo) => {
+                console.log(`${Date()} DELETE /reservas/${reservation}`);
+                return res.status(200).send({message : `Reservation ${reservation} removed`});
+            })
+            .catch((error) => {
+                console.log("error :" + error);
+                return res.status(200).send({message : `Reservation ${reservation} removed`});
+            })
+        
         }
     });
 });

@@ -11,13 +11,13 @@ const reservationsSchema = new mongoose.Schema({
     status: {type: String, default: "RESERVADA",required: true, enum: estadosValidos},
     creation_datetime: { type: Number, required: false },
     expiration_datetime: { type: Number, required: false },
-    destino: { type: String, required: [true, "Es necesario el destino de la reserva"] }
+    destination: { type: String, required: [true, "Es necesario el destino de la reserva"] }
 });
 
 mongoose.set('useCreateIndex', true);
 
 reservationsSchema.methods.cleanup = function() {
-    return {_id: this._id, id_vehicle: this.id_vehicle, id_client: this.id_client, status: this.status,
+    return {_id: this._id, id_vehicle: this.id_vehicle, id_client: this.id_client, status: this.status, destination: this.destination,
     creation_datetime: this.creation_datetime, expiration_datetime: this.expiration_datetime};
 }
 

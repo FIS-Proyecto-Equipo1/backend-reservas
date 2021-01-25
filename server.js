@@ -203,6 +203,7 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
                 .then((viaje) => {
                     
                     reserva.status = "INICIADA"
+                    reserva.expiration_datetime = ''
                     Reservations.findOneAndUpdate({_id: reserva._id}, reserva, (erro, reservaDB)=>{
                             
                         if (erro) {

@@ -36,7 +36,8 @@ app.get("/", (req, res) => {
 app.get(`${BASE_API_PATH}/reservas`, (req, res)  => {
     idCliente = req.header('x-user');
     console.log(`user: ${idCliente}`);
-    Reservations.find(req.query, (err, reservations) => {
+
+    Reservations.find(req.query).sort({"creation_datetime":"desc"}).exec((err, reservations) => {
         if(err){
             console.log(`${Date()} - ${err}`);
             res.send(new Error("Error al obtener las reservas")).status(500);

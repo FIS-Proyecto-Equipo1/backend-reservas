@@ -92,7 +92,7 @@ app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
             .then((usuario) => {
 
                 if(usuario.permiso !== vehiculo.permiso ){
-                    return res.status(400).send(new Error("Permiso no adecuado"));
+                    return res.status(400).send(new Error("Permiso de conducir no adecuado"));
                 }
                 
                 reservation.id_client = idCliente
@@ -162,7 +162,7 @@ app.delete(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
             console.log(err);
             return res.status(500).send(new Error("Reserva no encontrada o ya expirada/iniciada"));
         }else
-        {
+        { 
             VehiculosResource.patchVehicle(reservationDB.id_vehicle, VehiculosResource.STATUS_DISPONIBLE)
             .then((vehiculo) => {
                 console.log(`${Date()} DELETE /reservas/${reservation}`);

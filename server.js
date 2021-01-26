@@ -251,6 +251,7 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
 
 
 if(process.env.IS_TEST === undefined || !process.env.IS_TEST){
+    console.log("Iniciamos cron")
     cron.schedule("* * * * *", function () {
         console.log("Cron Job para expirar reservas caducadas");
     

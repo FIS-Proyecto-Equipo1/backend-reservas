@@ -209,15 +209,28 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
                     
                     reserva.status = "INICIADA"
                     reserva.expiration_datetime = ''
-                    Reservations.findOneAndUpdate({_id: reserva._id}, reserva, (erro, reservaDB)=>{
+
+
+                    VehiculosResource.patchVehicleLocalizacion(reserva.id_vehicle, VehiculosResource.STATUS_TRAYECTO, reserva.destination)
+                    .then((vehiculo) => {
+                        Reservations.findOneAndUpdate({_id: reserva._id}, reserva, (erro, reservaDB)=>{
                             
-                        if (erro) {
-                            console.log("Error" + erro)
-                            return res.status(500).send(new Error("Error al actualizar la reserva"));
-                        }else{
-                            return res.status(201).send(reservaDB);
-                        }
-                    });
+                            if (erro) {
+                                console.log("Error" + erro)
+                                return res.status(500).send(new Error("Error al actualizar la reserva"));
+                            }else{
+                                return res.status(201).send(reservaDB);
+                            }
+                        });
+
+                    })
+                    .catch((error) => {
+                        console.log("error :" + error);
+                        return res.status(500).send(new Error("Error al iniciar el viaje"));
+                    })
+
+
+                    
                     
                 })
                 .catch((error) => {

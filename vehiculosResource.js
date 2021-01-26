@@ -45,6 +45,23 @@ class VehiculosResource {
 
         return request.patch(url, options);
     }
+
+    static patchVehicleLocalizacion(matricula, estado, ubicacion) {
+        console.log("patchVehicle " + matricula + ", " + estado + ", " + ubicacion)
+        const url = VehiculosResource.vehiculosUrl("/api/v1/vehicles/" + matricula);
+        var body = {
+            estado: estado,
+            localizacion: ubicacion
+        }
+        const options = {
+            headers: VehiculosResource.requestHeaders(),
+            body: body
+        }
+
+        
+
+        return request.patch(url, options);
+    }
 }
 
 

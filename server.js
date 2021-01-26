@@ -40,7 +40,7 @@ app.get(`${BASE_API_PATH}/reservas`, (req, res)  => {
     Reservations.find(req.query).sort({"creation_datetime":"desc"}).exec((err, reservations) => {
         if(err){
             console.log(`${Date()} - ${err}`);
-            res.send(new Error("Error al obtener las reservas")).status(500);
+            res.status(500).send(new Error("Error al obtener las reservas"));
         }else{
             console.log(`${Date()} GET /reservas`)
             res.send(reservations.map((reservation) => {
@@ -54,11 +54,11 @@ app.get(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
     Reservations.findById(req.params.id_reservation, (err, reservation) => {
         if(err){
             console.log(`${Date()} - ${err}`);
-            return res.send(new Error("Reserva no encontrada")).status(500);
+            return res.status(500).send(new Error("Reserva no encontrada"));
         }else{
             if(reservation == null){
                 console.log(`${Date()} GET /reservas/${req.params.id_reservation} - Not found`);
-                return res.send(new Error("Reserva no encontrada")).status(500);
+                return res.status(500).send(new Error("Reserva no encontrada"));
             }
             else    
             {
@@ -84,7 +84,7 @@ app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
             // return res.send(vehiculo)
             // Si el vehiculo no está disponible, error
             if(vehiculo.estado !== VehiculosResource.STATUS_DISPONIBLE ){
-                return res.send(new Error("Vehiculo no disponible")).status(400);
+                return res.status(400).send(new Error("Vehiculo no disponible"));
             }
 
             // Obtenemos los datos del usuario
@@ -92,7 +92,7 @@ app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
             .then((usuario) => {
 
                 if(usuario.permiso !== vehiculo.permiso ){
-                    return res.send(new Error("Permiso no adecuado")).status(400);
+                    return res.status(400).send(new Error("Permiso no adecuado"));
                 }
                 
                 reservation.id_client = idCliente
@@ -103,20 +103,20 @@ app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
                     if(err)
                     {
                         console.log(`${Date()} - ${err}`);
-                        return res.send(new Error("Error al crear la reserva")).status(500);
+                        return res.status(500).send(new Error("Error al crear la reserva"));
                     }else{
                         console.log(`${Date()} POST /reservas`);
 
                         VehiculosResource.patchVehicle(reservation.id_vehicle, VehiculosResource.STATUS_RESERVADO)
                         .then((vehiculo) => {
                             
-                            return res.send(reservationDB).status(201);
+                            return res.status(201).send(reservationDB);
                         })
                         .catch((error) => {
                             console.log("error :" + error);
 
                             Reservations.deleteOne(reservation._id, (err) => {
-                                return res.send(new Error("Error al actualizar el vehículo")).status(500);
+                                return res.status(500).send(new Error("Error al actualizar el vehículo"));
                             });
 
 
@@ -134,13 +134,13 @@ app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
             })
             .catch((error) => {
                 console.log("error :" + error);
-                return res.send(new Error("Error al localizar al usuario")).status(500);
+                return res.status(500).send(new Error("Error al localizar al usuario"));
             })
 
         })
         .catch((error) => {
             console.log("error :" + error);
-            return res.send(new Error("Error al localizar al vehiculo")).status(500);
+            return res.status(500).send(new Error("Error al localizar al vehiculo"));
         })
 });
 
@@ -150,12 +150,17 @@ app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
 
 app.delete(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
     let reservation = req.params.id_reservation;
+    let query = {"_id": reservation, "status":"RESERVADA"}
+    let rol = req.header('x-role');
+    if(rol === "ADMIN"){
+        query = {"_id": reservation}
+    }
 
-    Reservations.findOneAndDelete({"_id": reservation, "status":"RESERVADA"}, (err, reservationDB) => {
+    Reservations.findOneAndDelete(query, (err, reservationDB) => {
         if(err || reservationDB == undefined)
         {    
             console.log(err);
-            return res.send(new Error("Reserva no encontrada o ya expirada/iniciada")).status(500);
+            return res.status(500).send(new Error("Reserva no encontrada o ya expirada/iniciada"));
         }else
         {
             VehiculosResource.patchVehicle(reservationDB.id_vehicle, VehiculosResource.STATUS_DISPONIBLE)
@@ -183,14 +188,14 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
         }else{
             if(reserva == null){
                 console.log(`${Date()} POST /reservas/${req.params.id_reservation}/desbloquear-vehiculo - Invalid`);
-                return res.send(new Error("Reserva no encontrada")).status(404);
+                return res.status(404).send(new Error("Reserva no encontrada"));
             }
             else    
             {
                 //TODO - comprobar que la reserva no está ni expirada ni iniciada!!
                 console.log(reserva)
                 if(reserva.status !== "RESERVADA"){
-                    return res.send(new Error("Reserva ya iniciada o expirada")).status(400);
+                    return res.status(400).send(new Error("Reserva ya iniciada o expirada"));
                 }
 
 
@@ -208,16 +213,16 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
                             
                         if (erro) {
                             console.log("Error" + erro)
-                            return res.send(new Error("Error al actualizar la reserva")).status(500);
+                            return res.status(500).send(new Error("Error al actualizar la reserva"));
                         }else{
-                            return res.send(reservaDB).status(201);
+                            return res.status(201).send(reservaDB);
                         }
                     });
                     
                 })
                 .catch((error) => {
                     console.log("error :" + error);
-                    return res.send(new Error("Error al iniciar el viaje")).status(500);
+                    return res.status(500).send(new Error("Error al iniciar el viaje"));
                 })
             }
         }

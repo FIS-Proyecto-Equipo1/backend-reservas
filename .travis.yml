@@ -10,6 +10,7 @@ before_install:
 install:
   - npm install
 script:
+  - npm test
   - docker build -t backend-reservas .
 deploy:
   provider: script

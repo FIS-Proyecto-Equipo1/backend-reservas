@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 let estadosValidos = {
-    values: ["RESERVADA", "EXPIRADA", "INICIADA"],
+    values: ["RESERVADA", "EXPIRADA", "COMPLETADA"],
     message: '{VALUE} no es un estado válido'
 }
 

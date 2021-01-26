@@ -35,9 +35,15 @@ app.get("/", (req, res) => {
 
 app.get(`${BASE_API_PATH}/reservas`, (req, res)  => {
     idCliente = req.header('x-user');
+    rol = req.header('x-rol');
     console.log(`user: ${idCliente}`);
 
-    Reservations.find(req.query).sort({"creation_datetime":"desc"}).exec((err, reservations) => {
+    var query = {"id_client": idCliente}
+    if(rol === "ADMIN"){
+        query = {}
+    }
+
+    Reservations.find(query).sort({"creation_datetime":"desc"}).exec((err, reservations) => {
         if(err){
             console.log(`${Date()} - ${err}`);
             res.status(500).send(new Error("Error al obtener las reservas"));
@@ -91,7 +97,8 @@ app.post(`${BASE_API_PATH}/reservas`, (req, res)  => {
             UsuariosResource.getUsuario(idCliente)
             .then((usuario) => {
 
-                if(usuario.permiso !== vehiculo.permiso ){
+                console.log("Usuario: " + usuario.permiso +", Vehiculo: "+ vehiculo.permiso)
+                if(!(usuario.permiso == "AB" || (usuario.permiso == "B" &&  vehiculo.permiso != "AB") || vehiculo.permiso == "NO" )){
                     return res.status(400).send(new Error("Permiso de conducir no adecuado"));
                 }
                 
@@ -207,7 +214,7 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
                 ViajesResource.postViaje(reserva.id_client, reserva.id_vehicle)
                 .then((viaje) => {
                     
-                    reserva.status = "INICIADA"
+                    reserva.status = "COMPLETADA"
                     reserva.expiration_datetime = ''
 
 

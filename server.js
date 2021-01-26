@@ -250,53 +250,53 @@ app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req,
 });
 
 
-if(process.env.IS_TEST === undefined || !process.env.IS_TEST){
-    console.log("Iniciamos cron")
-    cron.schedule("* * * * *", function () {
-        console.log("Cron Job para expirar reservas caducadas");
+// if(process.env.IS_TEST === undefined || !process.env.IS_TEST){
+//     console.log("Iniciamos cron")
+//     cron.schedule("* * * * *", function () {
+//         console.log("Cron Job para expirar reservas caducadas");
     
-        momento = new Date();
-        // console.log(momento)
-        momento.setMinutes(momento.getMinutes() - 10);
-        // console.log(momento)
-        Reservations.find({"status": "RESERVADA", "creation_datetime": {$lt: momento}}, (err, expiredReservations) => {
-            if(err){
-                console.log(Date()+" - "+ err);
+//         momento = new Date();
+//         // console.log(momento)
+//         momento.setMinutes(momento.getMinutes() - 10);
+//         // console.log(momento)
+//         Reservations.find({"status": "RESERVADA", "creation_datetime": {$lt: momento}}, (err, expiredReservations) => {
+//             if(err){
+//                 console.log(Date()+" - "+ err);
                 
-            }else{
-                if(expiredReservations == null){
-                    console.log(`${Date()} No expired`);
-                }
-                else    
-                {
-                    for( var i = 0; i < expiredReservations.length; i++ ){
-                        var reserva = expiredReservations[i]
-                        console.log(expiredReservations[i]);
+//             }else{
+//                 if(expiredReservations == null){
+//                     console.log(`${Date()} No expired`);
+//                 }
+//                 else    
+//                 {
+//                     for( var i = 0; i < expiredReservations.length; i++ ){
+//                         var reserva = expiredReservations[i]
+//                         console.log(expiredReservations[i]);
     
-                        // Modifica el estado del vehículo
-                        VehiculosResource.patchVehicle(reserva.id_vehicle, VehiculosResource.STATUS_DISPONIBLE)
-                            .then((vehiculo) => {
-                                // Marca como expirada la reserva
-                                reserva.status = "EXPIRADA"
-                                Reservations.findOneAndUpdate({_id: reserva._id}, reserva, (erro, reservaDB)=>{
+//                         // Modifica el estado del vehículo
+//                         VehiculosResource.patchVehicle(reserva.id_vehicle, VehiculosResource.STATUS_DISPONIBLE)
+//                             .then((vehiculo) => {
+//                                 // Marca como expirada la reserva
+//                                 reserva.status = "EXPIRADA"
+//                                 Reservations.findOneAndUpdate({_id: reserva._id}, reserva, (erro, reservaDB)=>{
     
-                                    if (erro) {
-                                        console.log("Error" + erro)
-                                    }
-                                });
-                            })
-                            .catch((error) => {
-                                console.log("error :" + error);
-                            })
-                    }
+//                                     if (erro) {
+//                                         console.log("Error" + erro)
+//                                     }
+//                                 });
+//                             })
+//                             .catch((error) => {
+//                                 console.log("error :" + error);
+//                             })
+//                     }
                     
     
-                }
-            }
-        });
+//                 }
+//             }
+//         });
     
-    });
-}
+//     });
+// }
 
 
 module.exports = app;

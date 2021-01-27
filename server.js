@@ -187,7 +187,7 @@ app.delete(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
 
 
 
-app.post(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req, res)  => {
+app.put(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req, res)  => {
     Reservations.findOne({"_id": req.params.id_reservation}, (err, reserva) => {
         if(err){
             console.log(Date()+" - "+ err);

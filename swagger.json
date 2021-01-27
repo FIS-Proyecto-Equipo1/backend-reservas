@@ -1,0 +1,295 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Definición del servicio de Reservas",
+    "version": "1.0.0",
+    "title": "Servicio de Reservas",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "urbanio-reservas.herokuapp.com",
+  "basePath": "/api/v1",
+  "tags": [
+    {
+      "name": "Reservas",
+      "description": "Reservas de vehículos"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/reservas": {
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Crear una reserva",
+        "description": "",
+        "operationId": "createReserva",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pet object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReservaEntrada"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación satisfactoria",
+            "schema": {
+              "$ref": "#/definitions/Reserva"
+            }
+          },
+          "400": {
+            "description": "Error de validación"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Listado de reservas para un usuario",
+        "description": "Obtiene el listado de reservas para el usuario indicado en la cabecera",
+        "operationId": "listaReservas",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-user",
+            "description": "Identificador del usuario",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-rol",
+            "description": "Rol del usuario",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación satisfactoria",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/Reserva"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reservas/{id}": {
+      "get": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Obtener una reserva para un usuario",
+        "description": "",
+        "operationId": "obtenerReserva",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-user",
+            "description": "Identificador del usuario",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-rol",
+            "description": "Rol del usuario",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Identificador de la reserva",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación satisfactoria",
+            "schema": {
+              "$ref": "#/definitions/Reserva"
+            }
+          },
+          "404": {
+            "description": "No encontrada"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Cancelar una reserva para un usuario",
+        "description": "",
+        "operationId": "cancelarReserva",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-user",
+            "description": "Identificador del usuario",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-rol",
+            "description": "Rol del usuario",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Identificador de la reserva",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "Operación satisfactoria"
+          },
+          "404": {
+            "description": "No encontrada"
+          }
+        }
+      }
+    },
+    "/reservas/{id}/desbloquear-vehiculo": {
+      "patch": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Inicia el viaje de una reserva para un usuario",
+        "description": "",
+        "operationId": "iniciarReserva",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-user",
+            "description": "Identificador del usuario",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-rol",
+            "description": "Rol del usuario",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Identificador de la reserva",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "Operación satisfactoria"
+          },
+          "404": {
+            "description": "No encontrada"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Reserva": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "example": "6010a016c35361bfd4f25d05"
+        },
+        "id_vehicle": {
+          "type": "string",
+          "example": "4532CDR"
+        },
+        "id_client": {
+          "type": "string",
+          "example": "5ffaf649a4952917d4d4fb94"
+        },
+        "destination": {
+          "type": "string",
+          "example": "Gran Plaza 22, sevilla"
+        },
+        "status": {
+          "type": "string",
+          "example": "RESERVADA"
+        },
+        "creation_datetime": {
+          "type": "integer",
+          "example": 1611702294915
+        },
+        "expiration_datetime": {
+          "type": "integer",
+          "example": 1611702294915
+        }
+      }
+    },
+    "ReservaEntrada": {
+      "type": "object",
+      "properties": {
+        "id_vehicle": {
+          "type": "string",
+          "example": "4532CDR"
+        },
+        "destination": {
+          "type": "string",
+          "example": "Gran Plaza 22, sevilla"
+        }
+      }
+    }
+  }
+}

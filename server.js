@@ -56,7 +56,7 @@ app.get(`${BASE_API_PATH}/reservas`, (req, res)  => {
     Reservations.find(query).sort({"creation_datetime":"desc"}).exec((err, reservations) => {
         if(err){
             console.log(`${Date()} - ${err}`);
-            res.status(500).send(new Error("Error al obtener las reservas"));
+            return res.status(500).send(new Error("Error al obtener las reservas"));
         }else{
             console.log(`${Date()} GET /reservas`)
             res.send(reservations.map((reservation) => {
@@ -79,7 +79,7 @@ app.get(`${BASE_API_PATH}/reservas/:id_reservation`, (req, res)  => {
             else    
             {
                 console.log(`${Date()} GET /reservas/${req.params.id_reservation}`);
-                res.send(reservation.cleanup());
+                return res.send(reservation.cleanup());
             }
         }
     });

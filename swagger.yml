@@ -6,14 +6,14 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "backend-reservas.herokuapp.com"
+host: "urbanio-reservas.herokuapp.com"
 basePath: "/api/v1"
 tags:
 - name: "Reservas"
   description: "Reservas de vehículos"
 schemes:
 
-- "http"
+- "https"
 paths:
   /reservas:
     post:
@@ -52,6 +52,11 @@ paths:
         description: "Identificador del usuario"
         required: true
         type: string
+      - in: "header"
+        name: "x-rol"
+        description: "Rol del usuario"
+        required: true
+        type: string
       consumes:
       - "application/json"
       produces:
@@ -75,6 +80,11 @@ paths:
       - in: "header"
         name: "x-user"
         description: "Identificador del usuario"
+        required: true
+        type: string
+      - in: "header"
+        name: "x-rol"
+        description: "Rol del usuario"
         required: true
         type: string
       - in: "path"
@@ -105,6 +115,11 @@ paths:
         description: "Identificador del usuario"
         required: true
         type: string
+      - in: "header"
+        name: "x-rol"
+        description: "Rol del usuario"
+        required: true
+        type: string
       - in: "path"
         name: "id"
         description: "Identificador de la reserva"
@@ -119,6 +134,7 @@ paths:
           description: "Operación satisfactoria"
         "404":
           description: "No encontrada"
+  /reservas/{id}/desbloquear-vehiculo:
     patch:
       tags:
       - "Reservas"
@@ -129,6 +145,11 @@ paths:
       - in: "header"
         name: "x-user"
         description: "Identificador del usuario"
+        required: true
+        type: string
+      - in: "header"
+        name: "x-rol"
+        description: "Rol del usuario"
         required: true
         type: string
       - in: "path"
@@ -151,24 +172,31 @@ definitions:
   Reserva:
     type: "object"
     properties:
-      id_reserva:
-        type: "integer"
-        format: "int64"
-      id_vehiculo:
-        type: "integer"
-        format: "int64"
-      id_cliente:
-        type: "integer"
-        format: "int64"
-      estado:
+      _id:
         type: "string"
-      creacion_datetime:
+        example: "6010a016c35361bfd4f25d05"
+      id_vehicle:
         type: "string"
-      expiracion_datetime:
+        example: "4532CDR"
+      id_client:
         type: "string"
+        example: "5ffaf649a4952917d4d4fb94"
+      destination:
+        type: "string"
+        example: "RESERVADA"
+      status:
+        type: "string"
+        example: "Gran Plaza 22, sevilla"
+      creation_datetime:
+        type: "integer"
+        example: 1611702294915
+      expiration_datetime:
+        type: "integer"
+        example: 1611702294915
   ReservaEntrada:
     type: "object"
     properties:
-      id_vehiculo:
-        type: "integer"
-        format: "int64"
+      id_vehicle:
+        type: "string"
+      destination:
+        type: "string"

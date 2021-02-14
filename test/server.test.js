@@ -81,7 +81,7 @@ describe("Test de reservas", () => {
                 .set({ "x-role": "USER" })
                 .then((response) => {
                 expect(response.statusCode).toBe(200);
-                expect(response.body.id_vehicle).toBe("2334TFG");
+                expect(response.body.id_vehicle).toBe("2334TFGaaaaa");
                 expect(dbFindById).toBeCalledWith("125151515", expect.any(Function));
             });
         });

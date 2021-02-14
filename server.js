@@ -9,6 +9,8 @@ const ViajesResource = require('./viajesResource');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
+jest.setTimeout(30000);
+
 var options = {
   explorer: true
 };

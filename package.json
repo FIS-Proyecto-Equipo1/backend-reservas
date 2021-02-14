@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest",
+    "test": "jest --forceExit",
     "test-detect": "jest --detectOpenHandles"
   },
   "author": "Roberto Serrano - Juan Luis Montes Calvo",

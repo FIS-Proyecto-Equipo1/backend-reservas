@@ -8,6 +8,7 @@ COPY package-lock.json .
 RUN npm install
 
 COPY *.js ./
+COPY swagger.json .
 
 EXPOSE 4041
 

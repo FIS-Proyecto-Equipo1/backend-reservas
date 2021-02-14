@@ -6,11 +6,21 @@ const VehiculosResource = require('./vehiculosResource');
 const UsuariosResource = require('./usuariosResource');
 const ViajesResource = require('./viajesResource');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
+var options = {
+  explorer: true
+};
+
 var BASE_API_PATH = "/api/v1";
 
 console.log("Starting Reservations service...");
 
 var app = express();
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
+
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");

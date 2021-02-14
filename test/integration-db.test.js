@@ -4,7 +4,7 @@ const dbConnect = require('../db.js');
 
 jest.setTimeout(30000);
 
-describe('Vehicle db connection', ()=>{
+describe('Reservations db connection', ()=>{
 
     beforeAll(()=>{
         return dbConnect(); 
@@ -16,7 +16,7 @@ describe('Vehicle db connection', ()=>{
         });
     });
 
-    it('writes a contact in the DB', (done)=>{
+    it('writes a Reservation in the DB', (done)=>{
         const reserva =
                 new Reservations({"status": "RESERVADA", "id_vehicle": "123123", "id_client": "5ffaf5695dc3ce0fa81f16b2", "destination": "Plaza mayor",
                 "creation_datetime": 1611324279780, "expiration_datetime": 1611324639780 });
@@ -25,14 +25,16 @@ describe('Vehicle db connection', ()=>{
         reserva.save((err, reservaDB) => {
             expect(err).toBeNull();
 
-            Reservations.findOne({"_id": reservaDB._id}, (err, reserva) => {
-                expect(reserva.id_vehicle).toBe("123123");
+            Reservations.find({}, (err, reservas) => {
+        // Reservations.findOne({"_id": reservaDB._id}, (err, reservas) => {
+                expect(reservas).toBeArrayOfSize(1);
+                // expect(reserva.id_vehicle).toBe("123123");
                 done();
             });
 
-            Reservations.findOneAndDelete({"_id": reservaDB._id}, (err, reservationDB) => {
-                done();
-            });
+            // Reservations.findOneAndDelete({"_id": reservaDB._id}, (err, reservationDB) => {
+            //     done();
+            // });
         });
     })
 

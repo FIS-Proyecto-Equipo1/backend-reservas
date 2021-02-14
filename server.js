@@ -9,7 +9,6 @@ const ViajesResource = require('./viajesResource');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
-jest.setTimeout(30000);
 
 var options = {
   explorer: true
@@ -55,13 +54,15 @@ app.get(`${BASE_API_PATH}/reservas`, (req, res)  => {
         query = {}
     }
 
-    Reservations.find(query).sort({"creation_datetime":"desc"}).exec((err, reservations) => {
+    // Reservations.find(query).sort({"creation_datetime":"desc"}).exec((err, reservations) => {
+    Reservations.find(query, (err, reservations) => {
         if(err){
             console.log(`${Date()} - ${err}`);
             return res.status(500).send(new Error("Error al obtener las reservas"));
         }else{
             console.log(`${Date()} GET /reservas`)
-            res.send(reservations.map((reservation) => {
+            reservations.sort((a,b) => (a.creation_datetime > b.creation_datetime) ? -1 : ((b.creation_datetime > a.creation_datetime) ? 1 : 0))
+            return res.send(reservations.map((reservation) => {
                 return reservation.cleanup();
             }));
         }
@@ -203,7 +204,7 @@ app.put(`${BASE_API_PATH}/reservas/:id_reservation/desbloquear-vehiculo`, (req, 
     Reservations.findOne({"_id": req.params.id_reservation}, (err, reserva) => {
         if(err){
             console.log(Date()+" - "+ err);
-            res.sendStatus(500);
+            return res.status(500).send(new Error("Reserva no encontrada o ya expirada/iniciada"));
         }else{
             if(reserva == null){
                 console.log(`${Date()} POST /reservas/${req.params.id_reservation}/desbloquear-vehiculo - Invalid`);
